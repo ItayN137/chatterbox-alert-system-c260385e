@@ -3,13 +3,58 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import NotificationPanel from '../components/NotificationPanel';
 import { mockNotifications } from '../data/mockNotifications';
+import { Notification, NotificationType } from '../types/notification';
 
 const Index = () => {
   const [showNotifications, setShowNotifications] = useState(true);
+  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
 
   const toggleNotifications = () => {
     setShowNotifications(!showNotifications);
   };
+
+  const handleNotificationRead = (notificationId: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, isRead: true }
+          : notification
+      )
+    );
+  };
+
+  const handleMarkAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, isRead: true }))
+    );
+  };
+
+  const handleAddNotification = (newNotification: Omit<Notification, 'id' | 'createdAt'>) => {
+    const notification: Notification = {
+      ...newNotification,
+      id: Date.now().toString(),
+      createdAt: new Date(),
+    };
+    
+    setNotifications(prev => [notification, ...prev]);
+  };
+
+  const handleTogglePin = (notificationId: string) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, isPinned: !notification.isPinned }
+          : notification
+      )
+    );
+  };
+
+  // Sort notifications: pinned first, then by creation date
+  const sortedNotifications = [...notifications].sort((a, b) => {
+    if (a.isPinned && !b.isPinned) return -1;
+    if (!a.isPinned && b.isPinned) return 1;
+    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -30,8 +75,12 @@ const Index = () => {
           {showNotifications && (
             <div className="animate-fade-in">
               <NotificationPanel 
-                notifications={mockNotifications}
+                notifications={sortedNotifications}
                 onClose={() => setShowNotifications(false)}
+                onNotificationRead={handleNotificationRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onAddNotification={handleAddNotification}
+                onTogglePin={handleTogglePin}
               />
             </div>
           )}
@@ -56,6 +105,8 @@ const Index = () => {
               <h3 className="font-semibold text-gray-800 mb-2">תכונות נוספות:</h3>
               <ul className="text-gray-600 space-y-1">
                 <li>• הצמדת הודעות חשובות</li>
+                <li>• סימון הודעות כנקראות</li>
+                <li>• הוספת הודעות חדשות</li>
                 <li>• הרחבה וכיווץ של פרטים</li>
                 <li>• הבחנה בין פרויקטים</li>
                 <li>• תמיכה מלאה בעברית</li>

@@ -5,9 +5,15 @@ import { Notification, NotificationType } from '../types/notification';
 
 interface NotificationItemProps {
   notification: Notification;
+  onRead?: (notificationId: string) => void;
+  onTogglePin?: (notificationId: string) => void;
 }
 
-const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => {
+const NotificationItem: React.FC<NotificationItemProps> = ({ 
+  notification, 
+  onRead, 
+  onTogglePin 
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const getTypeColor = (type: NotificationType): string => {
@@ -48,13 +54,37 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => 
     setIsExpanded(!isExpanded);
   };
 
+  const handleMouseEnter = () => {
+    if (!notification.isRead && onRead) {
+      onRead(notification.id);
+    }
+  };
+
+  const handleTogglePin = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onTogglePin) {
+      onTogglePin(notification.id);
+    }
+  };
+
   return (
-    <div className="p-3 hover:bg-gray-50 transition-colors">
+    <div 
+      className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+        notification.isRead ? 'bg-gray-50' : 'bg-white'
+      }`}
+      onMouseEnter={handleMouseEnter}
+    >
       <div className="flex items-start gap-3">
-        {/* Pinned indicator */}
-        {notification.isPinned && (
-          <Pin size={14} className="text-blue-500 mt-1 flex-shrink-0" />
-        )}
+        {/* Pin button */}
+        <button
+          onClick={handleTogglePin}
+          className={`flex-shrink-0 mt-1 p-1 rounded hover:bg-gray-200 transition-colors ${
+            notification.isPinned ? 'text-blue-500' : 'text-gray-400'
+          }`}
+          title={notification.isPinned ? 'בטל הצמדה' : 'הצמד הודעה'}
+        >
+          <Pin size={14} />
+        </button>
         
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -66,15 +96,22 @@ const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => 
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
               פרויקט {notification.project}
             </span>
+            {!notification.isRead && (
+              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            )}
           </div>
 
           {/* Title */}
-          <h4 className="font-medium text-gray-900 text-sm mb-1 leading-tight">
+          <h4 className={`font-medium text-sm mb-1 leading-tight ${
+            notification.isRead ? 'text-gray-600' : 'text-gray-900'
+          }`}>
             {notification.title}
           </h4>
 
           {/* Short text */}
-          <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+          <p className={`text-xs mb-2 leading-relaxed ${
+            notification.isRead ? 'text-gray-500' : 'text-gray-600'
+          }`}>
             {notification.shortText}
           </p>
 
