@@ -52,10 +52,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
   const toggleExpanded = () => {
     setIsExpanded(!isExpanded);
-  };
-
-  const handleMouseEnter = () => {
-    if (!notification.isRead && onRead) {
+    
+    // Mark as read only when expanding (showing more details)
+    if (!isExpanded && !notification.isRead && onRead) {
       onRead(notification.id);
     }
   };
@@ -69,10 +68,9 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
   return (
     <div 
-      className={`p-3 hover:bg-gray-50 transition-colors cursor-pointer ${
+      className={`p-3 hover:bg-gray-50 transition-colors ${
         notification.isRead ? 'bg-gray-50' : 'bg-white'
       }`}
-      onMouseEnter={handleMouseEnter}
     >
       <div className="flex items-start gap-3">
         {/* Pin button */}
