@@ -28,6 +28,18 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     return colors[type] || colors.info;
   };
 
+  const getTypeLineColor = (type: NotificationType): string => {
+    const colors = {
+      bug: 'bg-red-500',
+      update: 'bg-blue-500',
+      version: 'bg-green-500',
+      maintenance: 'bg-yellow-500',
+      security: 'bg-orange-500',
+      info: 'bg-gray-500'
+    };
+    return colors[type] || colors.info;
+  };
+
   const getTypeText = (type: NotificationType): string => {
     const typeTexts = {
       bug: 'באג',
@@ -68,10 +80,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
 
   return (
     <div 
-      className={`p-3 hover:bg-gray-50 transition-colors ${
+      className={`relative p-3 hover:bg-gray-50 transition-colors ${
         notification.isRead ? 'bg-gray-50' : 'bg-white'
       }`}
     >
+      {/* Type indicator line */}
+      <div className={`absolute right-0 top-0 bottom-0 w-1 ${getTypeLineColor(notification.type)}`}></div>
+      
       <div className="flex items-start gap-3">
         {/* Pin button */}
         <button
