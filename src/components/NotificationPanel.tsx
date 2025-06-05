@@ -24,6 +24,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [expandedNotificationId, setExpandedNotificationId] = useState<string | null>(null);
 
   const handleToggleExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -44,6 +45,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
   const handleToggleView = () => {
     setViewMode(viewMode === 'list' ? 'calendar' : 'list');
+    setExpandedNotificationId(null);
+  };
+
+  const handleCalendarDayClick = (date: Date, notification: Notification) => {
+    setViewMode('list');
+    setExpandedNotificationId(notification.id);
+    // Mark as read when opening from calendar
+    if (!notification.isRead && onNotificationRead) {
+      onNotificationRead(notification.id);
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -122,12 +133,16 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
                   notification={notification}
                   onRead={onNotificationRead}
                   onTogglePin={onTogglePin}
+                  isForceExpanded={expandedNotificationId === notification.id}
                 />
               ))}
             </div>
           )
         ) : (
-          <NotificationCalendar notifications={notifications} />
+          <NotificationCalendar 
+            notifications={notifications} 
+            onDayClick={handleCalendarDayClick}
+          />
         )}
       </div>
 
