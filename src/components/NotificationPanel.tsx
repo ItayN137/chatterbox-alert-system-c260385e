@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, X, Plus, Bell } from 'lucide-react';
+import { ChevronDown, ChevronUp, X, Plus, Bell, Minimize } from 'lucide-react';
 import NotificationItem from './NotificationItem';
 import AddNotificationDialog from './AddNotificationDialog';
 import { Notification } from '../types/notification';
@@ -87,9 +87,9 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
           <button
             onClick={handleToggleExpanded}
             className="p-1 hover:bg-gray-200 rounded transition-colors"
-            title="כווץ לפעמון"
+            title="מזער"
           >
-            <Bell size={16} />
+            <Minimize size={16} />
           </button>
         </div>
       </div>
