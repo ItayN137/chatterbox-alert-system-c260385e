@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { ChevronDown, ChevronUp, X, Plus, Bell, Minimize } from 'lucide-react';
+import { ChevronDown, ChevronUp, X, Plus, Bell, Minimize, Calendar as CalendarIcon, List } from 'lucide-react';
 import NotificationItem from './NotificationItem';
 import AddNotificationDialog from './AddNotificationDialog';
+import NotificationCalendar from './NotificationCalendar';
 import { Notification } from '../types/notification';
 
 interface NotificationPanelProps {
@@ -22,6 +23,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   const handleToggleExpanded = () => {
     setIsExpanded(!isExpanded);
@@ -38,6 +40,10 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
       onAddNotification(notification);
       setShowAddDialog(false);
     }
+  };
+
+  const handleToggleView = () => {
+    setViewMode(viewMode === 'list' ? 'calendar' : 'list');
   };
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -78,6 +84,13 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
         </div>
         <div className="flex items-center gap-1">
           <button
+            onClick={handleToggleView}
+            className="p-1 hover:bg-gray-200 rounded transition-colors"
+            title={viewMode === 'list' ? 'תצוגת לוח שנה' : 'רשימת הודעות'}
+          >
+            {viewMode === 'list' ? <CalendarIcon size={16} /> : <List size={16} />}
+          </button>
+          <button
             onClick={() => setShowAddDialog(true)}
             className="p-1 hover:bg-gray-200 rounded transition-colors"
             title="הוסף הודעה חדשה"
@@ -96,21 +109,25 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
       {/* Content Area */}
       <div className="flex-1 overflow-y-auto">
-        {notifications.length === 0 ? (
-          <div className="p-4 text-center text-gray-500 text-sm">
-            אין הודעות חדשות
-          </div>
+        {viewMode === 'list' ? (
+          notifications.length === 0 ? (
+            <div className="p-4 text-center text-gray-500 text-sm">
+              אין הודעות חדשות
+            </div>
+          ) : (
+            <div className="divide-y divide-gray-100">
+              {notifications.map((notification) => (
+                <NotificationItem 
+                  key={notification.id} 
+                  notification={notification}
+                  onRead={onNotificationRead}
+                  onTogglePin={onTogglePin}
+                />
+              ))}
+            </div>
+          )
         ) : (
-          <div className="divide-y divide-gray-100">
-            {notifications.map((notification) => (
-              <NotificationItem 
-                key={notification.id} 
-                notification={notification}
-                onRead={onNotificationRead}
-                onTogglePin={onTogglePin}
-              />
-            ))}
-          </div>
+          <NotificationCalendar notifications={notifications} />
         )}
       </div>
 
