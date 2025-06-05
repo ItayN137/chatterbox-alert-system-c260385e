@@ -1,64 +1,41 @@
 
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
-import { Notification, NotificationType } from '../types/notification';
-import { isSameDay, format } from 'date-fns';
+import { Notification } from '../types/notification';
+import { isSameDay } from 'date-fns';
 import { cn } from '@/lib/utils';
 
 interface NotificationCalendarProps {
   notifications: Notification[];
-  onDayClick?: (date: Date, notification: Notification) => void;
 }
 
-const NotificationCalendar: React.FC<NotificationCalendarProps> = ({ 
-  notifications,
-  onDayClick 
-}) => {
-  const getTypeColor = (type: NotificationType): string => {
-    const colors = {
-      bug: '#ef4444',
-      update: '#3b82f6',
-      version: '#22c55e',
-      maintenance: '#eab308',
-      security: '#f97316',
-      info: '#6b7280'
-    };
-    return colors[type] || colors.info;
-  };
-
-  // Group notifications by date and get the first notification for each date
-  const notificationsByDate = notifications.reduce((acc, notification) => {
-    const dateKey = format(new Date(notification.createdAt), 'yyyy-MM-dd');
-    if (!acc[dateKey]) {
-      acc[dateKey] = notification;
-    }
-    return acc;
-  }, {} as Record<string, Notification>);
-
+const NotificationCalendar: React.FC<NotificationCalendarProps> = ({ notifications }) => {
   // Get dates that have notifications
-  const notificationDates = Object.keys(notificationsByDate).map(dateKey => new Date(dateKey));
+  const notificationDates = notifications.map(n => new Date(n.createdAt));
+  
+  // Get dates that have version notifications specifically
+  const versionNotificationDates = notifications
+    .filter(n => n.type === 'version')
+    .map(n => new Date(n.createdAt));
 
-  const handleDayClick = (date: Date) => {
-    const dateKey = format(date, 'yyyy-MM-dd');
-    const notification = notificationsByDate[dateKey];
-    if (notification && onDayClick) {
-      onDayClick(date, notification);
-    }
-  };
-
-  const getDayStyle = (day: Date) => {
-    const dateKey = format(day, 'yyyy-MM-dd');
-    const notification = notificationsByDate[dateKey];
+  // Custom day content to show notification indicators
+  const customDayContent = (day: Date) => {
+    const hasNotification = notificationDates.some(date => isSameDay(date, day));
+    const hasVersionNotification = versionNotificationDates.some(date => isSameDay(date, day));
     
-    if (notification) {
-      const color = getTypeColor(notification.type);
-      return {
-        backgroundColor: color,
-        color: 'white',
-        fontWeight: 'bold'
-      };
-    }
-    return {};
+    if (!hasNotification) return undefined;
+    
+    return (
+      <div className="relative w-full h-full flex items-center justify-center">
+        <span>{day.getDate()}</span>
+        {hasVersionNotification && (
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-full"></div>
+        )}
+        {hasNotification && !hasVersionNotification && (
+          <div className="absolute bottom-0 right-0 w-2 h-2 bg-blue-500 rounded-full"></div>
+        )}
+      </div>
+    );
   };
 
   return (
@@ -66,19 +43,22 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
       <Calendar
         mode="single"
         className={cn("w-full pointer-events-auto")}
-        onDayClick={handleDayClick}
+        components={{
+          DayContent: ({ date }) => customDayContent(date)
+        }}
         modifiers={{
-          hasNotification: (day) => notificationDates.some(date => isSameDay(date, day))
+          hasNotification: (day) => notificationDates.some(date => isSameDay(date, day)),
+          hasVersionNotification: (day) => versionNotificationDates.some(date => isSameDay(date, day))
         }}
         modifiersStyles={{
-          hasNotification: (day) => getDayStyle(day)
-        }}
-        components={{
-          DayContent: ({ date }) => (
-            <span className="relative w-full h-full flex items-center justify-center">
-              {date.getDate()}
-            </span>
-          )
+          hasVersionNotification: {
+            backgroundColor: '#dcfce7',
+            color: '#166534'
+          },
+          hasNotification: {
+            backgroundColor: '#dbeafe',
+            color: '#1d4ed8'
+          }
         }}
       />
     </div>

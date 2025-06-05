@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { Pin, ChevronDown, ChevronUp } from 'lucide-react';
 import { Notification, NotificationType } from '../types/notification';
 
@@ -6,22 +7,14 @@ interface NotificationItemProps {
   notification: Notification;
   onRead?: (notificationId: string) => void;
   onTogglePin?: (notificationId: string) => void;
-  isForceExpanded?: boolean;
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({ 
   notification, 
   onRead, 
-  onTogglePin,
-  isForceExpanded = false
+  onTogglePin 
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  useEffect(() => {
-    if (isForceExpanded) {
-      setIsExpanded(true);
-    }
-  }, [isForceExpanded]);
 
   const getTypeColor = (type: NotificationType): string => {
     const colors = {
