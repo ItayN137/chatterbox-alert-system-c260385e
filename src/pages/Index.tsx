@@ -6,12 +6,7 @@ import { mockNotifications } from '../data/mockNotifications';
 import { Notification, NotificationType } from '../types/notification';
 
 const Index = () => {
-  const [showNotifications, setShowNotifications] = useState(true);
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
-
-  const toggleNotifications = () => {
-    setShowNotifications(!showNotifications);
-  };
 
   const handleNotificationRead = (notificationId: string) => {
     setNotifications(prev => 
@@ -62,28 +57,17 @@ const Index = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">מערכת הודעות מתקדמת</h1>
           <p className="text-xl text-gray-600 mb-6">קומפוננטת הודעות עם תמיכה מלאה בעברית ותכונות מתקדמות</p>
-          
-          <Button 
-            onClick={toggleNotifications}
-            className="mb-8"
-          >
-            {showNotifications ? 'הסתר הודעות' : 'הצג הודעות'}
-          </Button>
         </div>
 
-        <div className="flex justify-center">
-          {showNotifications && (
-            <div className="animate-fade-in">
-              <NotificationPanel 
-                notifications={sortedNotifications}
-                onClose={() => setShowNotifications(false)}
-                onNotificationRead={handleNotificationRead}
-                onMarkAllAsRead={handleMarkAllAsRead}
-                onAddNotification={handleAddNotification}
-                onTogglePin={handleTogglePin}
-              />
-            </div>
-          )}
+        {/* Bell notification panel - positioned fixed in top right */}
+        <div className="fixed top-8 right-8 z-50">
+          <NotificationPanel 
+            notifications={sortedNotifications}
+            onNotificationRead={handleNotificationRead}
+            onMarkAllAsRead={handleMarkAllAsRead}
+            onAddNotification={handleAddNotification}
+            onTogglePin={handleTogglePin}
+          />
         </div>
 
         {/* Demo Information */}
@@ -107,7 +91,8 @@ const Index = () => {
                 <li>• הצמדת הודעות חשובות</li>
                 <li>• סימון הודעות כנקראות</li>
                 <li>• הוספת הודעות חדשות</li>
-                <li>• הרחבה וכיווץ של פרטים</li>
+                <li>• פעמון עם מספר הודעות שלא נקראו</li>
+                <li>• הרחבה וכיווץ של פאנל ההודעות</li>
                 <li>• הבחנה בין פרויקטים</li>
                 <li>• תמיכה מלאה בעברית</li>
                 <li>• עיצוב רספונסיבי</li>
