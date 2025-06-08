@@ -46,21 +46,6 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
     }
   };
 
-  const getDayStyle = (day: Date) => {
-    const dateKey = format(day, 'yyyy-MM-dd');
-    const notification = notificationsByDate[dateKey];
-    
-    if (notification) {
-      const color = getTypeColor(notification.type);
-      return {
-        backgroundColor: color,
-        color: 'white',
-        fontWeight: 'bold'
-      };
-    }
-    return {};
-  };
-
   return (
     <div className="p-2" dir="ltr">
       <Calendar
@@ -70,15 +55,30 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
         modifiers={{
           hasNotification: (day) => notificationDates.some(date => isSameDay(date, day))
         }}
-        modifiersStyles={{
-          hasNotification: (day) => getDayStyle(day)
-        }}
         components={{
-          DayContent: ({ date }) => (
-            <span className="relative w-full h-full flex items-center justify-center">
-              {date.getDate()}
-            </span>
-          )
+          DayContent: ({ date }) => {
+            const dateKey = format(date, 'yyyy-MM-dd');
+            const notification = notificationsByDate[dateKey];
+            const hasNotification = !!notification;
+            
+            if (hasNotification) {
+              const color = getTypeColor(notification.type);
+              return (
+                <span 
+                  className="relative w-full h-full flex items-center justify-center text-white font-bold rounded"
+                  style={{ backgroundColor: color }}
+                >
+                  {date.getDate()}
+                </span>
+              );
+            }
+            
+            return (
+              <span className="relative w-full h-full flex items-center justify-center">
+                {date.getDate()}
+              </span>
+            );
+          }
         }}
       />
     </div>
