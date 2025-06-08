@@ -1,5 +1,8 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { Home } from 'lucide-react';
 import NotificationPanel from '../components/NotificationPanel';
 import { mockNotifications } from '../data/mockNotifications';
 import { Notification, NotificationType } from '../types/notification';
@@ -56,6 +59,14 @@ const Index = () => {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">מערכת הודעות מתקדמת</h1>
           <p className="text-xl text-gray-600 mb-6">קומפוננטת הודעות עם תמיכה מלאה בעברית ותכונות מתקדמות</p>
+          
+          {/* Link to Home page */}
+          <Link to="/home">
+            <Button className="mb-4 gap-2" size="lg">
+              <Home size={20} />
+              עבור לדף הבית של מערכת ההודעות
+            </Button>
+          </Link>
         </div>
 
         {/* Bell notification panel - positioned fixed in top right */}
