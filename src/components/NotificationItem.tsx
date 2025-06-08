@@ -103,38 +103,16 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       <div className={`absolute right-0 top-0 bottom-0 w-1 ${getTypeLineColor(notification.type)}`}></div>
       
       <div className="flex items-start gap-3">
-        {/* Unread indicator (now on the right) */}
+        {/* Unread indicator */}
         {!notification.isRead && (
           <div className="flex-shrink-0 mt-1">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
           </div>
         )}
         
-        {/* Pin button (now in the middle) */}
-        <button
-          onClick={handleTogglePin}
-          className={`flex-shrink-0 mt-1 p-1 rounded hover:bg-gray-200 transition-colors ${
-            notification.isPinned ? 'text-blue-500' : 'text-gray-400'
-          }`}
-          title={notification.isPinned ? 'בטל הצמדה' : 'הצמד הודעה'}
-        >
-          <Pin size={14} />
-        </button>
-
-        {/* Eye icon for read notifications (now on the left) */}
-        {notification.isRead && (
-          <button
-            onClick={handleMarkAsUnread}
-            className="flex-shrink-0 mt-1 p-1 rounded hover:bg-gray-200 transition-colors text-gray-400 hover:text-blue-500"
-            title="סמן כלא נקראה"
-          >
-            <Eye size={14} />
-          </button>
-        )}
-        
         {/* Content */}
         <div className="flex-1 min-w-0">
-          {/* Header */}
+          {/* Header with type, project, and action icons */}
           <div className="flex items-center gap-2 mb-2">
             <span className={`px-2 py-1 rounded text-xs font-medium border ${getTypeColor(notification.type)}`}>
               {getTypeText(notification.type)}
@@ -142,6 +120,31 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
               פרויקט {notification.project}
             </span>
+            
+            {/* Action icons moved to the left after project label */}
+            <div className="flex items-center gap-1 mr-auto">
+              {/* Pin button */}
+              <button
+                onClick={handleTogglePin}
+                className={`p-1 rounded hover:bg-gray-200 transition-colors ${
+                  notification.isPinned ? 'text-blue-500' : 'text-gray-400'
+                }`}
+                title={notification.isPinned ? 'בטל הצמדה' : 'הצמד הודעה'}
+              >
+                <Pin size={14} />
+              </button>
+
+              {/* Eye icon for read notifications */}
+              {notification.isRead && (
+                <button
+                  onClick={handleMarkAsUnread}
+                  className="p-1 rounded hover:bg-gray-200 transition-colors text-gray-400 hover:text-blue-500"
+                  title="סמן כלא נקראה"
+                >
+                  <Eye size={14} />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Title */}
