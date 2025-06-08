@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Notification, NotificationType } from '../types/notification';
@@ -26,12 +25,22 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
     return colors[type] || colors.info;
   };
 
-  // Group notifications by date and get the first notification for each date
+  // Group notifications by date and prioritize unread notifications
   const notificationsByDate = notifications.reduce((acc, notification) => {
     const dateKey = format(new Date(notification.createdAt), 'yyyy-MM-dd');
+    
+    // If no notification exists for this date, add it
     if (!acc[dateKey]) {
       acc[dateKey] = notification;
+    } else {
+      // If current notification is unread and existing is read, replace it
+      // This prioritizes unread notifications over read ones
+      if (!notification.isRead && acc[dateKey].isRead) {
+        acc[dateKey] = notification;
+      }
+      // If both have same read status, keep the first one (existing behavior)
     }
+    
     return acc;
   }, {} as Record<string, Notification>);
 

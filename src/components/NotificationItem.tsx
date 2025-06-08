@@ -1,5 +1,6 @@
+
 import React, { useState, useEffect } from 'react';
-import { Pin, ChevronDown, ChevronUp } from 'lucide-react';
+import { Pin, ChevronDown, ChevronUp, Eye } from 'lucide-react';
 import { Notification, NotificationType } from '../types/notification';
 
 interface NotificationItemProps {
@@ -85,6 +86,13 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
     }
   };
 
+  const handleMarkAsUnread = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onRead) {
+      onRead(notification.id);
+    }
+  };
+
   return (
     <div 
       className={`relative p-3 hover:bg-gray-50 transition-colors ${
@@ -95,7 +103,14 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
       <div className={`absolute right-0 top-0 bottom-0 w-1 ${getTypeLineColor(notification.type)}`}></div>
       
       <div className="flex items-start gap-3">
-        {/* Pin button */}
+        {/* Unread indicator (now on the right) */}
+        {!notification.isRead && (
+          <div className="flex-shrink-0 mt-1">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+          </div>
+        )}
+        
+        {/* Pin button (now in the middle) */}
         <button
           onClick={handleTogglePin}
           className={`flex-shrink-0 mt-1 p-1 rounded hover:bg-gray-200 transition-colors ${
@@ -105,6 +120,17 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
         >
           <Pin size={14} />
         </button>
+
+        {/* Eye icon for read notifications (now on the left) */}
+        {notification.isRead && (
+          <button
+            onClick={handleMarkAsUnread}
+            className="flex-shrink-0 mt-1 p-1 rounded hover:bg-gray-200 transition-colors text-gray-400 hover:text-blue-500"
+            title="סמן כלא נקראה"
+          >
+            <Eye size={14} />
+          </button>
+        )}
         
         {/* Content */}
         <div className="flex-1 min-w-0">
@@ -116,9 +142,6 @@ const NotificationItem: React.FC<NotificationItemProps> = ({
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
               פרויקט {notification.project}
             </span>
-            {!notification.isRead && (
-              <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            )}
           </div>
 
           {/* Title */}

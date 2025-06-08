@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import NotificationPanel from '../components/NotificationPanel';
@@ -12,7 +11,7 @@ const Index = () => {
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === notificationId 
-          ? { ...notification, isRead: true }
+          ? { ...notification, isRead: !notification.isRead } // Toggle read state
           : notification
       )
     );
