@@ -1,16 +1,18 @@
 
 import React, { useState } from 'react';
-import { Settings, Moon, Sun, Monitor } from 'lucide-react';
+import { Settings, Moon, Sun } from 'lucide-react';
 import { useTheme } from './ThemeProvider';
 
 const SettingsButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
+  const toggleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
     setTheme(newTheme);
-    setIsOpen(false);
   };
+
+  const isDark = theme === 'dark';
 
   return (
     <div className="relative">
@@ -23,48 +25,33 @@ const SettingsButton = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 bg-background border border-border rounded-lg shadow-xl w-48 z-50">
-          <div className="p-3 border-b border-border">
-            <h3 className="font-semibold text-foreground text-sm">מצב תצוגה</h3>
+        <>
+          {/* Overlay to close dropdown when clicking outside */}
+          <div 
+            className="fixed inset-0 z-40"
+            onClick={() => setIsOpen(false)}
+          />
+          
+          <div className="absolute top-full left-0 mt-2 bg-background border border-border rounded-lg shadow-xl w-48 z-50">
+            <div className="p-3 border-b border-border">
+              <h3 className="font-semibold text-foreground text-sm">מצב תצוגה</h3>
+            </div>
+            <div className="p-2">
+              <button
+                onClick={toggleTheme}
+                className="w-full flex items-center justify-between p-3 rounded-md hover:bg-accent transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  {isDark ? <Sun size={16} className="text-foreground" /> : <Moon size={16} className="text-foreground" />}
+                  <span className="text-foreground text-sm">{isDark ? 'מצב בהיר' : 'מצב כהה'}</span>
+                </div>
+                <div className={`w-12 h-6 rounded-full transition-colors ${isDark ? 'bg-primary' : 'bg-muted'} relative`}>
+                  <div className={`w-5 h-5 bg-background rounded-full absolute top-0.5 transition-transform ${isDark ? 'translate-x-6' : 'translate-x-0.5'}`}></div>
+                </div>
+              </button>
+            </div>
           </div>
-          <div className="p-2">
-            <button
-              onClick={() => handleThemeChange('light')}
-              className={`w-full flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors ${
-                theme === 'light' ? 'bg-accent' : ''
-              }`}
-            >
-              <Sun size={16} className="text-foreground" />
-              <span className="text-foreground text-sm">מצב בהיר</span>
-            </button>
-            <button
-              onClick={() => handleThemeChange('dark')}
-              className={`w-full flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors ${
-                theme === 'dark' ? 'bg-accent' : ''
-              }`}
-            >
-              <Moon size={16} className="text-foreground" />
-              <span className="text-foreground text-sm">מצב כהה</span>
-            </button>
-            <button
-              onClick={() => handleThemeChange('system')}
-              className={`w-full flex items-center gap-3 p-2 rounded-md hover:bg-accent transition-colors ${
-                theme === 'system' ? 'bg-accent' : ''
-              }`}
-            >
-              <Monitor size={16} className="text-foreground" />
-              <span className="text-foreground text-sm">מצב מערכת</span>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Overlay to close dropdown when clicking outside */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-40"
-          onClick={() => setIsOpen(false)}
-        />
+        </>
       )}
     </div>
   );

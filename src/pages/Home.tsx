@@ -6,7 +6,6 @@ import NotificationPanel from '../components/NotificationPanel';
 import SettingsButton from '../components/SettingsButton';
 import { Notification } from '../types/notification';
 import { mockNotifications } from '../data/mockNotifications';
-import { Mountain } from 'lucide-react';
 
 const Home = () => {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
@@ -71,7 +70,7 @@ const Home = () => {
       <div className="bg-background shadow-sm border-b border-border p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Mountain className="text-primary" size={28} />
+            <span className="text-3xl">🏔️</span>
             <h1 className="text-2xl font-bold text-foreground">מערכת הודעות</h1>
             {unreadCount > 0 && (
               <span className="bg-destructive text-destructive-foreground text-sm px-3 py-1 rounded-full">
@@ -134,7 +133,7 @@ const Home = () => {
           ) : (
             <div className="flex items-center justify-center h-full text-muted-foreground">
               <div className="text-center">
-                <Mountain size={64} className="mx-auto mb-4 text-muted-foreground/50" />
+                <span className="text-6xl block mb-4">🏔️</span>
                 <p className="text-lg">בחר הודעה לצפייה בפרטים</p>
               </div>
             </div>
