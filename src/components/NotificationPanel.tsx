@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, X, Plus, Bell, Minimize, Calendar as CalendarIcon, List } from 'lucide-react';
 import NotificationItem from './NotificationItem';
@@ -146,6 +145,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 <NotificationCalendar 
                   notifications={notifications} 
                   onDayClick={handleCalendarDayClick}
+                  compact={true}
                 />
               )}
             </div>

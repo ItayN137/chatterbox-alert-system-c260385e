@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Notification, NotificationType } from '../types/notification';
@@ -7,11 +8,13 @@ import { cn } from '@/lib/utils';
 interface NotificationCalendarProps {
   notifications: Notification[];
   onDayClick?: (date: Date, notification: Notification) => void;
+  compact?: boolean;
 }
 
 const NotificationCalendar: React.FC<NotificationCalendarProps> = ({ 
   notifications,
-  onDayClick 
+  onDayClick,
+  compact = false
 }) => {
   const getTypeColor = (type: NotificationType): string => {
     const colors = {
@@ -56,10 +59,13 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
   };
 
   return (
-    <div className="p-2" dir="ltr">
+    <div className={cn("p-2", compact && "p-1")} dir="ltr">
       <Calendar
         mode="single"
-        className={cn("w-full pointer-events-auto")}
+        className={cn(
+          "w-full pointer-events-auto",
+          compact && "scale-75 -mx-4 -my-2"
+        )}
         onDayClick={handleDayClick}
         modifiers={{
           hasNotification: (day) => notificationDates.some(date => isSameDay(date, day))
@@ -74,7 +80,10 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
               const color = getTypeColor(notification.type);
               return (
                 <span 
-                  className="relative w-full h-full flex items-center justify-center text-white font-bold rounded"
+                  className={cn(
+                    "relative w-full h-full flex items-center justify-center text-white font-bold rounded",
+                    compact && "text-xs"
+                  )}
                   style={{ backgroundColor: color }}
                 >
                   {date.getDate()}
@@ -83,7 +92,10 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
             }
             
             return (
-              <span className="relative w-full h-full flex items-center justify-center">
+              <span className={cn(
+                "relative w-full h-full flex items-center justify-center",
+                compact && "text-xs"
+              )}>
                 {date.getDate()}
               </span>
             );
