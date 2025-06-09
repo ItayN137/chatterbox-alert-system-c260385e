@@ -3,13 +3,16 @@ import React, { useState } from 'react';
 import NotificationItem from '../components/NotificationItem';
 import NotificationDetail from '../components/NotificationDetail';
 import NotificationPanel from '../components/NotificationPanel';
+import NotificationCalendar from '../components/NotificationCalendar';
 import SettingsButton from '../components/SettingsButton';
+import AddNotificationButton from '../components/AddNotificationButton';
 import { Notification } from '../types/notification';
 import { mockNotifications } from '../data/mockNotifications';
 
 const Home = () => {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
 
   const handleNotificationRead = (notificationId: string) => {
     setNotifications(prev => 
@@ -55,6 +58,15 @@ const Home = () => {
     );
   };
 
+  const handleCalendarDayClick = (date: Date, notification: Notification) => {
+    setViewMode('list');
+    setSelectedNotification(notification);
+    // Mark as read when opening from calendar
+    if (!notification.isRead) {
+      handleNotificationRead(notification.id);
+    }
+  };
+
   // Sort notifications: pinned first, then by creation date
   const sortedNotifications = [...notifications].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
@@ -88,7 +100,13 @@ const Home = () => {
               onAddNotification={handleAddNotification}
               onTogglePin={handleTogglePin}
             />
-            <SettingsButton />
+            <AddNotificationButton 
+              onAddNotification={handleAddNotification}
+            />
+            <SettingsButton 
+              onViewModeChange={setViewMode}
+              viewMode={viewMode}
+            />
           </div>
         </div>
       </div>
@@ -97,29 +115,38 @@ const Home = () => {
         {/* Notifications List - Left Side */}
         <div className="w-1/3 bg-background border-l border-border overflow-y-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold text-foreground">רשימת הודעות</h2>
+            <h2 className="font-semibold text-foreground">
+              {viewMode === 'list' ? 'רשימת הודעות' : 'לוח שנה'}
+            </h2>
             <p className="text-sm text-muted-foreground">{notifications.length} הודעות</p>
           </div>
           
-          <div className="divide-y divide-border">
-            {sortedNotifications.map((notification) => (
-              <div
-                key={notification.id}
-                onClick={() => handleNotificationSelect(notification)}
-                className={`cursor-pointer transition-colors ${
-                  selectedNotification?.id === notification.id 
-                    ? 'bg-accent border-r-4 border-primary' 
-                    : 'hover:bg-accent/50'
-                }`}
-              >
-                <NotificationItem 
-                  notification={notification}
-                  onRead={handleNotificationRead}
-                  onTogglePin={handleTogglePin}
-                />
-              </div>
-            ))}
-          </div>
+          {viewMode === 'list' ? (
+            <div className="divide-y divide-border">
+              {sortedNotifications.map((notification) => (
+                <div
+                  key={notification.id}
+                  onClick={() => handleNotificationSelect(notification)}
+                  className={`cursor-pointer transition-colors ${
+                    selectedNotification?.id === notification.id 
+                      ? 'bg-accent border-r-4 border-primary' 
+                      : 'hover:bg-accent/50'
+                  }`}
+                >
+                  <NotificationItem 
+                    notification={notification}
+                    onRead={handleNotificationRead}
+                    onTogglePin={handleTogglePin}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <NotificationCalendar 
+              notifications={sortedNotifications}
+              onDayClick={handleCalendarDayClick}
+            />
+          )}
         </div>
 
         {/* Notification Detail - Right Side */}
