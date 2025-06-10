@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+
+import React, { useState, useEffect } from 'react';
 import NotificationItem from '../components/NotificationItem';
 import NotificationDetail from '../components/NotificationDetail';
 import NotificationPanel from '../components/NotificationPanel';
 import NotificationCalendar from '../components/NotificationCalendar';
 import SettingsButton from '../components/SettingsButton';
 import AddNotificationButton from '../components/AddNotificationButton';
+import WhatsNewDialog from '../components/WhatsNewDialog';
 import { Notification } from '../types/notification';
 import { mockNotifications } from '../data/mockNotifications';
 
@@ -12,6 +14,7 @@ const Home = () => {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [showWhatsNew, setShowWhatsNew] = useState(false);
   const [projects, setProjects] = useState<{ id: number; name: string }[]>([
     { id: 1, name: 'פרויקט דוגמה 1' },
     { id: 2, name: 'פרויקט דוגמה 2' },
@@ -25,6 +28,14 @@ const Home = () => {
     { id: 'security', name: 'אבטחה' },
     { id: 'info', name: 'מידע' }
   ]);
+
+  // Check for version notifications on component mount
+  useEffect(() => {
+    const versionNotifications = notifications.filter(n => n.type === 'version');
+    if (versionNotifications.length > 0) {
+      setShowWhatsNew(true);
+    }
+  }, []);
 
   const handleNotificationRead = (notificationId: string) => {
     setNotifications(prev => 
@@ -103,9 +114,17 @@ const Home = () => {
   });
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
+  const versionNotifications = notifications.filter(n => n.type === 'version');
 
   return (
     <div className="min-h-screen bg-background" dir="rtl">
+      {/* WhatsNew Dialog */}
+      <WhatsNewDialog
+        isOpen={showWhatsNew}
+        onClose={() => setShowWhatsNew(false)}
+        versionNotifications={versionNotifications}
+      />
+
       {/* Header */}
       <div className="bg-background shadow-sm border-b border-border p-4">
         <div className="flex items-center justify-between">
