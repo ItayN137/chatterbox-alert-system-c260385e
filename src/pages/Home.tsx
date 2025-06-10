@@ -13,6 +13,19 @@ const Home = () => {
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
   const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [projects, setProjects] = useState<{ id: number; name: string }[]>([
+    { id: 1, name: 'פרויקט דוגמה 1' },
+    { id: 2, name: 'פרויקט דוגמה 2' },
+    { id: 3, name: 'פרויקט דוגמה 3' }
+  ]);
+  const [notificationTypes, setNotificationTypes] = useState<{ id: string; name: string }[]>([
+    { id: 'bug', name: 'באג' },
+    { id: 'update', name: 'עדכון' },
+    { id: 'version', name: 'גרסה' },
+    { id: 'maintenance', name: 'תחזוקה' },
+    { id: 'security', name: 'אבטחה' },
+    { id: 'info', name: 'מידע' }
+  ]);
 
   const handleNotificationRead = (notificationId: string) => {
     setNotifications(prev => 
@@ -67,6 +80,22 @@ const Home = () => {
     }
   };
 
+  const handleAddProject = (projectName: string) => {
+    const newProject = {
+      id: Math.max(...projects.map(p => p.id)) + 1,
+      name: projectName
+    };
+    setProjects(prev => [...prev, newProject]);
+  };
+
+  const handleAddNotificationType = (typeName: string) => {
+    const newType = {
+      id: typeName.toLowerCase().replace(/\s+/g, '_'),
+      name: typeName
+    };
+    setNotificationTypes(prev => [...prev, newType]);
+  };
+
   // Sort notifications: pinned first, then by creation date
   const sortedNotifications = [...notifications].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1;
@@ -106,6 +135,10 @@ const Home = () => {
             <SettingsButton 
               onViewModeChange={setViewMode}
               viewMode={viewMode}
+              projects={projects}
+              notificationTypes={notificationTypes}
+              onAddProject={handleAddProject}
+              onAddNotificationType={handleAddNotificationType}
             />
           </div>
         </div>
@@ -151,7 +184,13 @@ const Home = () => {
 
         {/* Notification Detail - Right Side */}
         <div className="flex-1 bg-muted/30">
-          {selectedNotification ? (
+          {viewMode === 'calendar' ? (
+            <NotificationCalendar 
+              notifications={sortedNotifications}
+              onDayClick={handleCalendarDayClick}
+              isFullScreen={true}
+            />
+          ) : selectedNotification ? (
             <NotificationDetail 
               notification={selectedNotification}
               onRead={handleNotificationRead}

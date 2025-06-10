@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Notification, NotificationType } from '../types/notification';
@@ -7,11 +8,13 @@ import { cn } from '@/lib/utils';
 interface NotificationCalendarProps {
   notifications: Notification[];
   onDayClick?: (date: Date, notification: Notification) => void;
+  isFullScreen?: boolean;
 }
 
 const NotificationCalendar: React.FC<NotificationCalendarProps> = ({ 
   notifications,
-  onDayClick 
+  onDayClick,
+  isFullScreen = false
 }) => {
   const getTypeColor = (type: NotificationType): string => {
     const colors = {
@@ -56,10 +59,16 @@ const NotificationCalendar: React.FC<NotificationCalendarProps> = ({
   };
 
   return (
-    <div className="p-2" dir="ltr">
+    <div className={cn(
+      "flex items-center justify-center",
+      isFullScreen ? "p-8 h-full" : "p-2"
+    )} dir="ltr">
       <Calendar
         mode="single"
-        className={cn("w-full pointer-events-auto")}
+        className={cn(
+          "pointer-events-auto",
+          isFullScreen ? "w-auto h-auto scale-150" : "w-full"
+        )}
         onDayClick={handleDayClick}
         modifiers={{
           hasNotification: (day) => notificationDates.some(date => isSameDay(date, day))
