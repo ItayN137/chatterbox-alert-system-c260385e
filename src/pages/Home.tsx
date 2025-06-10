@@ -72,7 +72,6 @@ const Home = () => {
   };
 
   const handleCalendarDayClick = (date: Date, notification: Notification) => {
-    setViewMode('list');
     setSelectedNotification(notification);
     // Mark as read when opening from calendar
     if (!notification.isRead) {
@@ -145,7 +144,42 @@ const Home = () => {
       </div>
 
       <div className="flex h-[calc(100vh-80px)]">
-        {/* Notifications List - Left Side */}
+        {/* Left Side - Changes based on view mode */}
+        <div className="flex-1 bg-muted/30">
+          {viewMode === 'calendar' ? (
+            selectedNotification ? (
+              <NotificationDetail 
+                notification={selectedNotification}
+                onRead={handleNotificationRead}
+                onTogglePin={handleTogglePin}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="text-center">
+                  <span className="text-6xl block mb-4">🏔️</span>
+                  <p className="text-lg">בחר תאריך בלוח השנה לצפייה בהודעה</p>
+                </div>
+              </div>
+            )
+          ) : (
+            selectedNotification ? (
+              <NotificationDetail 
+                notification={selectedNotification}
+                onRead={handleNotificationRead}
+                onTogglePin={handleTogglePin}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-muted-foreground">
+                <div className="text-center">
+                  <span className="text-6xl block mb-4">🏔️</span>
+                  <p className="text-lg">בחר הודעה לצפייה בפרטים</p>
+                </div>
+              </div>
+            )
+          )}
+        </div>
+
+        {/* Right Side - Changes based on view mode */}
         <div className="w-1/3 bg-background border-l border-border overflow-y-auto">
           <div className="p-4 border-b border-border">
             <h2 className="font-semibold text-foreground">
@@ -179,30 +213,6 @@ const Home = () => {
               notifications={sortedNotifications}
               onDayClick={handleCalendarDayClick}
             />
-          )}
-        </div>
-
-        {/* Notification Detail - Right Side */}
-        <div className="flex-1 bg-muted/30">
-          {viewMode === 'calendar' ? (
-            <NotificationCalendar 
-              notifications={sortedNotifications}
-              onDayClick={handleCalendarDayClick}
-              isFullScreen={true}
-            />
-          ) : selectedNotification ? (
-            <NotificationDetail 
-              notification={selectedNotification}
-              onRead={handleNotificationRead}
-              onTogglePin={handleTogglePin}
-            />
-          ) : (
-            <div className="flex items-center justify-center h-full text-muted-foreground">
-              <div className="text-center">
-                <span className="text-6xl block mb-4">🏔️</span>
-                <p className="text-lg">בחר הודעה לצפייה בפרטים</p>
-              </div>
-            </div>
           )}
         </div>
       </div>
