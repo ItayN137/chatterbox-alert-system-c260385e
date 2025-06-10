@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import NotificationItem from '../components/NotificationItem';
 import NotificationDetail from '../components/NotificationDetail';
@@ -148,38 +147,29 @@ const Home = () => {
         {/* Notifications List - Left Side */}
         <div className="w-1/3 bg-background border-l border-border overflow-y-auto">
           <div className="p-4 border-b border-border">
-            <h2 className="font-semibold text-foreground">
-              {viewMode === 'list' ? 'רשימת הודעות' : 'לוח שנה'}
-            </h2>
+            <h2 className="font-semibold text-foreground">רשימת הודעות</h2>
             <p className="text-sm text-muted-foreground">{notifications.length} הודעות</p>
           </div>
           
-          {viewMode === 'list' ? (
-            <div className="divide-y divide-border">
-              {sortedNotifications.map((notification) => (
-                <div
-                  key={notification.id}
-                  onClick={() => handleNotificationSelect(notification)}
-                  className={`cursor-pointer transition-colors ${
-                    selectedNotification?.id === notification.id 
-                      ? 'bg-accent border-r-4 border-primary' 
-                      : 'hover:bg-accent/50'
-                  }`}
-                >
-                  <NotificationItem 
-                    notification={notification}
-                    onRead={handleNotificationRead}
-                    onTogglePin={handleTogglePin}
-                  />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <NotificationCalendar 
-              notifications={sortedNotifications}
-              onDayClick={handleCalendarDayClick}
-            />
-          )}
+          <div className="divide-y divide-border">
+            {sortedNotifications.map((notification) => (
+              <div
+                key={notification.id}
+                onClick={() => handleNotificationSelect(notification)}
+                className={`cursor-pointer transition-colors ${
+                  selectedNotification?.id === notification.id 
+                    ? 'bg-accent border-r-4 border-primary' 
+                    : 'hover:bg-accent/50'
+                }`}
+              >
+                <NotificationItem 
+                  notification={notification}
+                  onRead={handleNotificationRead}
+                  onTogglePin={handleTogglePin}
+                />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Notification Detail - Right Side */}
